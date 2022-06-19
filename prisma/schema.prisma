@@ -11,37 +11,45 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
+  id       String   @id @default(uuid())
   name     String   @db.VarChar(50)
+  email    String
   jobTitle String   @db.VarChar(100)
   posts    Post[]
   profile  Profile?
 
-  @@unique([name])
+  @@unique([email])
+  @@map("users")
 }
 
 model Profile {
-  id        Int    @id @default(autoincrement())
+  id        String @id @default(uuid())
   biography String
-  userId    Int    @unique
+  userId    String @unique
   user      User   @relation(fields: [userId], references: [id])
+
+  @@map("profiles")
 }
 
 model Post {
-  id         Int        @id @default(autoincrement())
+  id         String     @id @default(uuid())
   title      String
   published  Boolean    @default(true)
   content    String
-  authorId   Int
+  authorId   String
   author     User       @relation(fields: [authorId], references: [id])
   tags       String[]
   categories Category[]
+
+  @@map("posts")
 }
 
 model Category {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(uuid())
   name  String
   posts Post[]
 
+
   @@unique([name])
+  @@map("categories")
 }
