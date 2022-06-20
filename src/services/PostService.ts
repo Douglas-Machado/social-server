@@ -27,11 +27,33 @@ class CreatePostService {
     if (!index) index = 0
 
     const [posts, totalPosts] = await prismaClient.$transaction([
-      prismaClient.post.findMany({ take: postsLimit, skip: index }),
+      prismaClient.post.findMany({
+        take: postsLimit,
+        skip: index,
+        orderBy: {
+          created_at: 'asc',
+        },
+      }),
       prismaClient.post.count(),
     ])
 
     return { totalPosts, posts }
+  }
+
+  async deletePost(id: string) {
+    try {
+      await prismaClient.post.delete({
+        where: { id: id },
+      })
+
+      return { message: 'deleted successfully' }
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2025') {
+          throw e.meta.cause
+        }
+      }
+    }
   }
 }
 

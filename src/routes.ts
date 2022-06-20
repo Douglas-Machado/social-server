@@ -8,12 +8,13 @@ import categoriesController from './controllers/CategoriesController'
 const routes = Router()
 
 routes.get('/users', userController.handleListUsers)
-routes.post('/create/user', userController.handleCreateUser)
+routes.post('/users/create', userController.handleCreateUser)
 
-routes.post('/create/profile', createProfileController.handle)
+routes.post('/profile/create', createProfileController.handle)
 
 routes.get('/posts', postController.handleListPosts)
-routes.post('/create/post', postController.handleCreatePost)
+routes.post('/posts/create', postController.handleCreatePost)
+routes.delete('/posts/delete/:id', postController.handleDeletePost)
 
 routes.get('/categories', categoriesController.handle)
 

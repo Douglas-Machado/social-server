@@ -23,8 +23,9 @@ class CreateUserService {
         throw 'Missing Params'
       }
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        console.log(e)
         if (e.code === 'P2002') {
-          throw 'Email must be unique'
+          throw `${e.meta.target[0]} must be unique`
         }
       }
     }

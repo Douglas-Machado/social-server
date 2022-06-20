@@ -49,6 +49,18 @@ class PostController {
       return res.status(400).json({ message: e })
     }
   }
+
+  async handleDeletePost(req: Request, res: Response) {
+    const { id } = req.params
+
+    try {
+      const result = await service.deletePost(id)
+
+      return res.json(result)
+    } catch (e) {
+      return res.status(400).json({ message: e })
+    }
+  }
 }
 
 export default new PostController()
