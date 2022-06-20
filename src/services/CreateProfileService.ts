@@ -6,7 +6,7 @@ class CreateProfileService {
     const profile = await prismaClient.profile.create({
       data: {
         biography: biography,
-        userId: userId,
+        user_id: userId,
       },
     })
     return profile

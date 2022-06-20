@@ -2,11 +2,7 @@ import { prismaClient } from '../prisma/prisma'
 
 class CategoriesService {
   async execute() {
-    const categories = await prismaClient.category.findMany({
-      orderBy: {
-        id: 'asc',
-      },
-    })
+    const categories = await prismaClient.category.findMany()
     return categories
   }
 }

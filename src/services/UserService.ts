@@ -8,18 +8,17 @@ interface ICreateUserParams {
 }
 
 class CreateUserService {
-  async execute({ name, email, jobTitle }: ICreateUserParams) {
+  async createUser({ name, email, jobTitle }: ICreateUserParams) {
     try {
       const user = await prismaClient.user.create({
         data: {
           name: name,
           email: email,
-          jobTitle: jobTitle,
+          job_title: jobTitle,
         },
       })
       return user
     } catch (e) {
-      console.log(e)
       if (e instanceof Prisma.PrismaClientValidationError) {
         throw 'Missing Params'
       }
@@ -29,6 +28,18 @@ class CreateUserService {
         }
       }
     }
+  }
+
+  async listUsers() {
+    const users = await prismaClient.user.findMany({
+      where: {
+        name: {
+          not: 'Admin',
+        },
+      },
+    })
+
+    return users
   }
 }
 

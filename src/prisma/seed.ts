@@ -6,7 +6,7 @@ class CreateSeeds {
       data: {
         name: 'Admin',
         email: 'admin@admin.com',
-        jobTitle: 'Admin',
+        job_title: 'Admin',
       },
     })
   }
