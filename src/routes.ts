@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import createUserController from './controllers/CreateUserController'
+import userController from './controllers/UserController'
 import createPostController from './controllers/CreatePostController'
 import createProfileController from './controllers/CreateProfileController'
 
@@ -7,7 +7,9 @@ import categoriesController from './controllers/CategoriesController'
 
 const routes = Router()
 
-routes.post('/create/user', createUserController.handle)
+routes.get('/users', userController.handleListUsers)
+routes.post('/create/user', userController.handleCreateUser)
+
 routes.post('/create/profile', createProfileController.handle)
 routes.post('/create/post', createPostController.handle)
 

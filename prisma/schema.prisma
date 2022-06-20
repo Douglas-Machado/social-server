@@ -11,12 +11,12 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(uuid())
-  name     String   @db.VarChar(50)
-  email    String
-  jobTitle String   @db.VarChar(100)
-  posts    Post[]
-  profile  Profile?
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(50)
+  email     String
+  job_title String   @db.VarChar(100)
+  posts     Post[]
+  profile   Profile?
 
   @@unique([email])
   @@map("users")
@@ -25,21 +25,23 @@ model User {
 model Profile {
   id        String @id @default(uuid())
   biography String
-  userId    String @unique
-  user      User   @relation(fields: [userId], references: [id])
+  user_id   String @unique
+  user      User   @relation(fields: [user_id], references: [id])
 
   @@map("profiles")
 }
 
 model Post {
-  id         String     @id @default(uuid())
-  title      String
-  published  Boolean    @default(true)
-  content    String
-  authorId   String
-  author     User       @relation(fields: [authorId], references: [id])
-  tags       String[]
-  categories Category[]
+  id          String   @id @default(uuid())
+  title       String
+  published   Boolean  @default(true)
+  content     String
+  author_id   String
+  author      User     @relation(fields: [author_id], references: [id])
+  tags        String[]
+  category_id String
+  categories  Category @relation(fields: [category_id], references: [id])
+
 
   @@map("posts")
 }
@@ -48,7 +50,6 @@ model Category {
   id    String @id @default(uuid())
   name  String
   posts Post[]
-
 
   @@unique([name])
   @@map("categories")
