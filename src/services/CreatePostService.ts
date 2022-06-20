@@ -1,18 +1,14 @@
 import { prismaClient } from '../prisma/prisma'
-
-interface ICreatePostParams {
-  title: string
-  content: string
-  authorId: string
-}
+import { ICreatePostParams } from '../controllers/CreatePostController'
 
 class CreatePostService {
-  async execute({ title, content, authorId }: ICreatePostParams) {
-    const post = prismaClient.post.create({
+  async execute({ title, content, authorId, tags }: ICreatePostParams) {
+    const post = await prismaClient.post.create({
       data: {
         title: title,
         content: content,
         authorId: authorId,
+        tags: tags,
       },
     })
     return post

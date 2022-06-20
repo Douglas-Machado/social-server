@@ -1,7 +1,7 @@
 import { prismaClient } from './prisma'
 
-class CreateAdminUser {
-  async create() {
+class CreateSeeds {
+  async createAdmin() {
     await prismaClient.user.create({
       data: {
         name: 'Admin',
@@ -10,8 +10,22 @@ class CreateAdminUser {
       },
     })
   }
+
+  async createCategories() {
+    await prismaClient.category.createMany({
+      data: [
+        { name: 'Memes' },
+        { name: 'Technology' },
+        { name: 'Fashion' },
+        { name: 'Sports' },
+        { name: 'Games' },
+        { name: 'News' },
+      ],
+    })
+  }
 }
 
-const createAdminUser = new CreateAdminUser()
+const createSeeds = new CreateSeeds()
 
-createAdminUser.create()
+createSeeds.createAdmin()
+createSeeds.createCategories()
