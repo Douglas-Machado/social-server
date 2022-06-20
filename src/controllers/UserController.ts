@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import { CreateUserService } from '../services/UserService'
+import { index, limit } from './PostController'
+
 const service = new CreateUserService()
 
 class UserController {
@@ -14,8 +16,16 @@ class UserController {
   }
 
   async handleListUsers(req: Request, res: Response) {
+    const maximumNumberOfPosts = parseInt(process.env.MAXIMUM_NUMBER_OF_POSTS)
+
+    const index: index = Number(req.query.index)
+    const postsLimit: limit = Number(req.query.limit)
+
     try {
-      const result = await service.listUsers()
+      if (maximumNumberOfPosts < postsLimit)
+        throw `The maximum number of posts is ${maximumNumberOfPosts}`
+
+      const result = await service.listUsers(postsLimit, index)
 
       return res.json(result)
     } catch (e) {
