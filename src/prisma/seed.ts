@@ -4,8 +4,8 @@ class CreateSeeds {
   async createAdmin() {
     await prismaClient.user.create({
       data: {
-        name: 'Admin',
-        email: 'admin@admin.com',
+        name: process.env.ADMIN_NAME,
+        email: process.env.ADMIN_EMAIL,
         job_title: 'Admin',
       },
     })

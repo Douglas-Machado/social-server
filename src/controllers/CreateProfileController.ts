@@ -8,10 +8,14 @@ export interface ICreateProfileParams {
 
 class CreateProfileController {
   async handle(req: Request, res: Response) {
-    const { biography, userId }: ICreateProfileParams = req.body
-    const service = new CreateProfileService()
-    const result = await service.execute({ biography, userId })
-    return res.json(result)
+    try {
+      const { biography, userId }: ICreateProfileParams = req.body
+      const service = new CreateProfileService()
+      const result = await service.execute({ biography, userId })
+      return res.json(result)
+    } catch (e) {
+      return res.status(400).json({ message: e })
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { prismaClient } from '../prisma/prisma'
+import validator from 'validator'
 
 interface ICreateUserParams {
   name: string
@@ -9,6 +10,8 @@ interface ICreateUserParams {
 
 class CreateUserService {
   async createUser({ name, email, jobTitle }: ICreateUserParams) {
+    if (!validator.isEmail(email)) throw `${email} is not valid`
+
     try {
       const user = await prismaClient.user.create({
         data: {
@@ -23,7 +26,6 @@ class CreateUserService {
         throw 'Missing Params'
       }
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        console.log(e)
         if (e.code === 'P2002') {
           throw `${e.meta.target[0]} must be unique`
         }
@@ -41,6 +43,9 @@ class CreateUserService {
           name: {
             not: 'Admin',
           },
+        },
+        orderBy: {
+          created_at: 'asc',
         },
         take: postsLimit,
         skip: index,

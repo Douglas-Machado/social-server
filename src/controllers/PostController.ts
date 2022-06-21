@@ -16,7 +16,6 @@ export type limit = number
 
 class PostController {
   async handleCreatePost(req: Request, res: Response) {
-    console.log(req.body)
     const { title, content, author_id, tags, category_id }: IPost = req.body
 
     try {

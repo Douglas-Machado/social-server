@@ -14,6 +14,7 @@ class CreatePostService {
           category_id: category_id,
         },
       })
+
       return post
     } catch (e) {
       if (e instanceof Prisma.PrismaClientValidationError) {
