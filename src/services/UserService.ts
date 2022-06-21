@@ -23,23 +23,34 @@ class CreateUserService {
         throw 'Missing Params'
       }
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        console.log(e)
         if (e.code === 'P2002') {
-          throw 'Email must be unique'
+          throw `${e.meta.target[0]} must be unique`
         }
       }
     }
   }
 
-  async listUsers() {
-    const users = await prismaClient.user.findMany({
-      where: {
-        name: {
-          not: 'Admin',
-        },
-      },
-    })
+  async listUsers(postsLimit?: number, index?: number) {
+    if (!postsLimit) postsLimit = 20
+    if (!index) index = 0
 
-    return users
+    const [users, totalUsers] = await prismaClient.$transaction([
+      prismaClient.user.findMany({
+        where: {
+          name: {
+            not: 'Admin',
+          },
+        },
+        take: postsLimit,
+        skip: index,
+      }),
+      prismaClient.user.count({
+        skip: 1,
+      }),
+    ])
+
+    return { totalUsers, users }
   }
 }
 
