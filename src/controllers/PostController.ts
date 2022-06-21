@@ -16,7 +16,6 @@ export type limit = number
 
 class PostController {
   async handleCreatePost(req: Request, res: Response) {
-    console.log(req.body)
     const { title, content, author_id, tags, category_id }: IPost = req.body
 
     try {
@@ -63,9 +62,17 @@ class PostController {
 
   async handleEditPost(req: Request, res: Response) {
     const { title, content, author_id, tags, category_id }: IPost = req.body
+    const { post_id } = req.params
+    const { user_id } = req.headers
 
     try {
-      const result = await service.editPost({ title, content, author_id, tags, category_id })
+      const result = await service.editPost(post_id, user_id, {
+        title,
+        content,
+        author_id,
+        tags,
+        category_id,
+      })
       return res.json(result)
     } catch (e) {
       return res.status(400).json({ message: e })

@@ -14,6 +14,7 @@ class CreatePostService {
           category_id: category_id,
         },
       })
+
       return post
     } catch (e) {
       if (e instanceof Prisma.PrismaClientValidationError) {
@@ -52,9 +53,16 @@ class CreatePostService {
     return { totalPosts, posts }
   }
 
-  async editPost({ title, content, author_id, tags, category_id }: IPost) {
+  async editPost(post_id, user_id, { title, content, author_id, tags, category_id }: IPost) {
     try {
-      const post = await prismaClient.post.create({
+      const post = await this.getPost(post_id)
+
+      if (user_id !== post.author_id) throw 'You must be the author to edit this post'
+
+      const updatedPost = await prismaClient.post.update({
+        where: {
+          id: post_id,
+        },
         data: {
           title: title,
           content: content,
@@ -63,11 +71,12 @@ class CreatePostService {
           category_id: category_id,
         },
       })
-      return post
+      return updatedPost
     } catch (e) {
       if (e instanceof Prisma.PrismaClientValidationError) {
         throw 'Missing Params'
       }
+      throw e
     }
   }
 
@@ -87,7 +96,6 @@ class CreatePostService {
           throw e.meta.cause
         }
       }
-
       throw e
     }
   }
