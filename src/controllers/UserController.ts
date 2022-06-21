@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { CreateUserService } from '../services/UserService'
+import { UserService } from '../services/UserService'
 import { index, limit } from './PostController'
 
-const service = new CreateUserService()
+const service = new UserService()
 
 class UserController {
   async handleCreateUser(req: Request, res: Response) {
@@ -12,6 +12,18 @@ class UserController {
       return res.json(result)
     } catch (e) {
       return res.status(400).json({ message: e })
+    }
+  }
+
+  async handleGetUser(req: Request, res: Response) {
+    const { user_id } = req.params
+
+    try {
+      const result = await service.getUser(user_id)
+
+      return res.json(result)
+    } catch (e) {
+      console.log(e)
     }
   }
 
