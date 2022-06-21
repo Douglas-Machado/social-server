@@ -8,7 +8,7 @@ interface ICreateUserParams {
   jobTitle: string
 }
 
-class CreateUserService {
+class UserService {
   async createUser({ name, email, jobTitle }: ICreateUserParams) {
     if (!validator.isEmail(email)) throw `${email} is not valid`
 
@@ -30,6 +30,22 @@ class CreateUserService {
           throw `${e.meta.target[0]} must be unique`
         }
       }
+    }
+  }
+
+  async getUser(user_id: string) {
+    try {
+      const user = await prismaClient.user.findUnique({
+        where: {
+          id: user_id,
+        },
+      })
+
+      if (!user) throw 'user not found'
+
+      return user
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -59,4 +75,4 @@ class CreateUserService {
   }
 }
 
-export { CreateUserService }
+export { UserService }

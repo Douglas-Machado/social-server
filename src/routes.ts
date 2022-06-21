@@ -9,6 +9,7 @@ const routes = Router()
 
 routes.get('/users', userController.handleListUsers)
 routes.post('/users/create', userController.handleCreateUser)
+routes.get('/users/:user_id', userController.handleGetUser)
 
 routes.post('/profile/create', createProfileController.handle)
 

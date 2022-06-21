@@ -1,6 +1,7 @@
 import { prismaClient } from '../prisma/prisma'
 import { IPost } from '../controllers/PostController'
 import { Prisma } from '@prisma/client'
+import { UserService } from './UserService'
 
 class CreatePostService {
   async createPost({ title, content, author_id, tags, category_id }: IPost) {
@@ -82,9 +83,13 @@ class CreatePostService {
 
   async deletePost(post_id: string, user_id) {
     try {
+      const userService = new UserService()
+      const user = await userService.getUser(user_id)
+
       const post = await this.getPost(post_id)
 
-      if (user_id !== post.author_id) throw 'You must be the author to delete this post'
+      if (user_id !== post.author_id && user.name !== process.env.ADMIN_NAME)
+        throw 'You must be the author to delete this post'
       await prismaClient.post.delete({
         where: { id: post_id },
       })

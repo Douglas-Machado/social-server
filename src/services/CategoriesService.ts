@@ -8,7 +8,7 @@ class CategoriesService {
         name: true,
       },
     })
-    return categories
+    return { categories: categories }
   }
 }
 
