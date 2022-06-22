@@ -17,7 +17,6 @@ class CreatePostService {
           category_id: category_id,
         },
       })
-
       return post
     } catch (e) {
       if (e instanceof Prisma.PrismaClientValidationError) {
@@ -55,7 +54,7 @@ class CreatePostService {
           content: true,
           author_id: true,
           tags: true,
-          categories: {
+          category: {
             select: {
               id: true,
               name: true,
