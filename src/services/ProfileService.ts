@@ -1,9 +1,9 @@
 import { prismaClient } from '../prisma/prisma'
-import { ICreateProfileParams } from '../controllers/CreateProfileController'
+import { ICreateProfileParams } from '../controllers/ProfileController'
 import { Prisma } from '@prisma/client'
 
-class CreateProfileService {
-  async execute({ biography, userId }: ICreateProfileParams) {
+class ProfileService {
+  async createProfile({ biography, userId }: ICreateProfileParams) {
     try {
       const profile = await prismaClient.profile.create({
         data: {
@@ -20,4 +20,4 @@ class CreateProfileService {
   }
 }
 
-export { CreateProfileService }
+export { ProfileService }

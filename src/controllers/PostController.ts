@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import { CreatePostService } from '../services/PostService'
+import { PostService } from '../services/PostService'
 
-const service = new CreatePostService()
+const service = new PostService()
 
 export interface IPost {
   title?: string
@@ -39,7 +39,7 @@ class PostController {
       const result = await service.getPost(post_id)
       return res.json(result)
     } catch (e) {
-      return res.status(400).json({ message: e })
+      return res.status(400).json({ message: e.message })
     }
   }
 

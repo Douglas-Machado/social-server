@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
 import { UserService } from './UserService'
 const userService = new UserService()
 
-class CreatePostService {
+class PostService {
   async createPost({ title, content, author_id, tags, category_id }: IPost) {
     try {
       const post = await prismaClient.post.create({
@@ -31,9 +31,7 @@ class CreatePostService {
         id: post_id,
       },
     })
-
-    if (!post) throw 'Post not found'
-
+    if (post === null) throw new Error('Post not found')
     return post
   }
 
@@ -120,4 +118,4 @@ class CreatePostService {
   }
 }
 
-export { CreatePostService }
+export { PostService }
