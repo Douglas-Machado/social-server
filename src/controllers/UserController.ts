@@ -4,11 +4,17 @@ import { index, limit } from './PostController'
 
 const service = new UserService()
 
+export interface ICreateUserParams {
+  name: string
+  email: string
+  job_title: string
+}
+
 class UserController {
   async handleCreateUser(req: Request, res: Response) {
-    const { name, email, jobTitle } = req.body
+    const { name, email, job_title }: ICreateUserParams = req.body
     try {
-      const result = await service.createUser({ name, email, jobTitle })
+      const result = await service.createUser({ name, email, job_title })
       return res.json(result)
     } catch (e) {
       return res.status(400).json({ message: e })

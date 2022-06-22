@@ -66,24 +66,21 @@ class PostService {
     return { totalPosts, posts }
   }
 
-  async editPost(post_id, user_id, { title, content, author_id, tags, category_id }: IPost) {
+  async editPost(post_id: string, user_id, { content, tags }: IPost) {
     try {
       const user = await userService.getUser(user_id)
       const post = await this.getPost(post_id)
 
       if (user_id !== post.author_id && user.name !== process.env.ADMIN_NAME)
-        throw 'You must be the author to edit this post'
+        throw new Error('You must be the author to edit this post')
 
       const updatedPost = await prismaClient.post.update({
         where: {
           id: post_id,
         },
         data: {
-          title: title,
           content: content,
-          author_id: author_id,
           tags: tags,
-          category_id: category_id,
         },
       })
       return updatedPost
