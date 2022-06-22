@@ -44,10 +44,23 @@ class CreatePostService {
 
     const [posts, totalPosts] = await prismaClient.$transaction([
       prismaClient.post.findMany({
-        take: postsLimit,
-        skip: index,
         orderBy: {
           created_at: 'asc',
+        },
+        skip: index,
+        take: postsLimit,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          author_id: true,
+          tags: true,
+          categories: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       }),
       prismaClient.post.count(),

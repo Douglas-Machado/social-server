@@ -19,6 +19,7 @@ routes.get('/posts/:post_id', postController.handleGetPost)
 routes.put('/posts/:post_id', postController.handleEditPost)
 routes.delete('/posts/delete/:post_id', postController.handleDeletePost)
 
-routes.get('/categories', categoriesController.handle)
+routes.get('/categories', categoriesController.handleListCategories)
+routes.get('/categories/:category_id', categoriesController.handleListCategoryPosts)
 
 export { routes }

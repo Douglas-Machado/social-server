@@ -1,11 +1,18 @@
 import { Request, Response } from 'express'
 import { CategoriesService } from '../services/CategoriesService'
 
-class CategoriesController {
-  async handle(req: Request, res: Response) {
-    const service = new CategoriesService()
+const service = new CategoriesService()
 
-    const result = await service.execute()
+class CategoriesController {
+  async handleListCategories(req: Request, res: Response) {
+    const result = await service.listCategories()
+
+    return res.json(result)
+  }
+
+  async handleListCategoryPosts(req: Request, res: Response) {
+    const { category_id } = req.params
+    const result = await service.listCategoryPosts(category_id)
 
     return res.json(result)
   }
