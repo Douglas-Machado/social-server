@@ -34,19 +34,20 @@ class UserService {
   }
 
   async getUser(user_id: string) {
-    try {
-      const user = await prismaClient.user.findUnique({
-        where: {
-          id: user_id,
-        },
-      })
+    const user = await prismaClient.user.findUnique({
+      where: {
+        id: user_id,
+      },
+      select: {
+        id: true,
+        name: true,
+        job_title: true,
+      },
+    })
 
-      if (!user) throw 'user not found'
+    if (!user) throw new Error('user not found')
 
-      return user
-    } catch (e) {
-      console.log(e)
-    }
+    return user
   }
 
   async listUsers(postsLimit?: number, index?: number) {

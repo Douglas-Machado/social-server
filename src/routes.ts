@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import userController from './controllers/UserController'
 import postController from './controllers/PostController'
-import createProfileController from './controllers/CreateProfileController'
+import ProfileController from './controllers/ProfileController'
 
 import categoriesController from './controllers/CategoriesController'
 
@@ -11,7 +11,7 @@ routes.get('/users', userController.handleListUsers)
 routes.post('/users/create', userController.handleCreateUser)
 routes.get('/users/:user_id', userController.handleGetUser)
 
-routes.post('/profile/create', createProfileController.handle)
+routes.post('/profile/create', ProfileController.handle)
 
 routes.get('/posts', postController.handleListPosts)
 routes.post('/posts/create', postController.handleCreatePost)
