@@ -2,14 +2,10 @@ import { Prisma } from '@prisma/client'
 import { prismaClient } from '../prisma/prisma'
 import validator from 'validator'
 
-interface ICreateUserParams {
-  name: string
-  email: string
-  jobTitle: string
-}
+import { ICreateUserParams } from '../controllers/UserController'
 
 class UserService {
-  async createUser({ name, email, jobTitle }: ICreateUserParams) {
+  async createUser({ name, email, job_title }: ICreateUserParams) {
     if (!validator.isEmail(email)) throw `${email} is not valid`
 
     try {
@@ -17,7 +13,7 @@ class UserService {
         data: {
           name: name,
           email: email,
-          job_title: jobTitle,
+          job_title: job_title,
         },
       })
       return user

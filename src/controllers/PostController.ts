@@ -61,20 +61,18 @@ class PostController {
   }
 
   async handleEditPost(req: Request, res: Response) {
-    const { title, content, author_id, tags, category_id }: IPost = req.body
+    const { content, tags }: IPost = req.body
     const { post_id } = req.params
     const { user_id } = req.headers
 
     try {
       const result = await service.editPost(post_id, user_id, {
-        title,
         content,
-        author_id,
         tags,
-        category_id,
       })
       return res.json(result)
     } catch (e) {
+      if (e.message) return res.status(401).json({ message: e.message })
       return res.status(400).json({ message: e })
     }
   }
