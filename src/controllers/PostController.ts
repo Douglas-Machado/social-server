@@ -18,6 +18,8 @@ class PostController {
   async handleCreatePost(req: Request, res: Response) {
     const { title, content, author_id, tags, category_id }: IPost = req.body
 
+    if (this.hasDuplicates(tags)) return res.status(400).json({ message: 'The tag must be unique' })
+
     try {
       const result = await service.createPost({
         title,
@@ -83,11 +85,14 @@ class PostController {
 
     try {
       const result = await service.deletePost(post_id, user_id)
-
       return res.json(result)
     } catch (e) {
       return res.status(400).json({ message: e })
     }
+  }
+
+  hasDuplicates(tags) {
+    return new Set(tags).size !== tags.length
   }
 }
 
