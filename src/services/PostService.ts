@@ -52,6 +52,7 @@ class PostService {
           content: true,
           author_id: true,
           tags: true,
+          updated_at: true,
           category: {
             select: {
               id: true,

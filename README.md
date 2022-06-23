@@ -1,4 +1,4 @@
-# SOCIAL(SERVER)
+# SOCIAL(API REST)
 
 <p>Social back-end api REST to create users, profiles, and posts</p>
 
