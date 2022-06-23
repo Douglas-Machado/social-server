@@ -68,7 +68,7 @@ class PostService {
 
   async editPost(post_id: string, user_id, { content, tags }: IPost) {
     try {
-      const user = await userService.getUser(user_id)
+      const user = await this.verifyUser(user_id)
       const post = await this.getPost(post_id)
 
       if (user_id !== post.author_id && user.name !== process.env.ADMIN_NAME)
@@ -94,7 +94,7 @@ class PostService {
 
   async deletePost(post_id: string, user_id) {
     try {
-      const user = await userService.getUser(user_id)
+      const user = await this.verifyUser(user_id)
       const post = await this.getPost(post_id)
 
       if (user_id !== post.author_id && user.name !== process.env.ADMIN_NAME)
@@ -102,7 +102,6 @@ class PostService {
       await prismaClient.post.delete({
         where: { id: post_id },
       })
-
       return { message: 'deleted successfully' }
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -110,7 +109,17 @@ class PostService {
           throw e.meta.cause
         }
       }
+      if (e.message) throw e.message
       throw e
+    }
+  }
+
+  async verifyUser(user_id) {
+    try {
+      const user = await userService.getUser(user_id)
+      return user
+    } catch (e) {
+      if (e.message) throw 'Invalid user'
     }
   }
 }
