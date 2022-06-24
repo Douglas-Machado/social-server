@@ -47,7 +47,8 @@ class PostService {
     return post
   }
 
-  async listPosts(queryParams: IQueryParams) {
+  async listPosts(queryParams?: IQueryParams) {
+    if (!queryParams) queryParams = { index: 0, limit: undefined }
     const { index, limit } = queryParams
     const [posts, totalPosts] = await prismaClient.$transaction([
       prismaClient.post.findMany({

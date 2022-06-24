@@ -53,7 +53,8 @@ class UserService {
     return user
   }
 
-  async listUsers(queryParams: IQueryParams) {
+  async listUsers(queryParams?: IQueryParams) {
+    if (!queryParams) queryParams = { index: 0, limit: undefined }
     const { index, limit } = queryParams
     const [users, totalUsers] = await prismaClient.$transaction([
       prismaClient.user.findMany({
