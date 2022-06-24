@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { StructError } from 'superstruct'
 import { PostService } from '../services/PostService'
 
 const service = new PostService()
@@ -11,8 +12,14 @@ export interface IPost {
   category_id?: string
 }
 
-export type index = number
-export type limit = number
+export interface IQueryParams {
+  index: string | number
+  limit: string | number
+}
+
+interface IuserId {
+  user_id: string
+}
 
 class PostController {
   async handleCreatePost(req: Request, res: Response) {
@@ -33,6 +40,9 @@ class PostController {
 
       return res.json(result)
     } catch (e) {
+      if (e instanceof StructError) {
+        return res.status(400).json({ message: `The ${e.value} is not a valid ${e.key}` })
+      }
       return res.status(400).json({ message: e })
     }
   }
@@ -48,19 +58,11 @@ class PostController {
   }
 
   async handleListPosts(req: Request, res: Response) {
-    const maximumNumberOfPosts = parseInt(process.env.MAXIMUM_NUMBER_OF_POSTS)
-
-    const index: index = Number(req.query.index)
-    const postsLimit: limit = Number(req.query.limit)
-
     try {
-      if (maximumNumberOfPosts < postsLimit)
-        throw `The maximum number of posts is ${maximumNumberOfPosts}`
-
-      const result = await service.listPosts(postsLimit, index)
+      const result = await service.listPosts(req.query as unknown as IQueryParams)
       return res.json(result)
     } catch (e) {
-      return res.status(400).json({ message: e })
+      return res.status(400).json({ message: 'Something went wrong' })
     }
   }
 
@@ -83,7 +85,7 @@ class PostController {
 
   async handleDeletePost(req: Request, res: Response) {
     const { post_id } = req.params
-    const { user_id } = req.headers
+    const { user_id } = req.headers as unknown as IuserId
 
     try {
       const result = await service.deletePost(post_id, user_id)

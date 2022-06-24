@@ -1,12 +1,24 @@
 import { prismaClient } from '../prisma/prisma'
-import { IPost } from '../controllers/PostController'
+import { IPost, IQueryParams } from '../controllers/PostController'
 import { Prisma } from '@prisma/client'
+import { assert, object, string, size, array, optional } from 'superstruct'
 
 import { UserService } from './UserService'
 const userService = new UserService()
 
+const CreatePost = object({
+  title: size(string(), 2, 50),
+  content: size(string(), 2, 400),
+  author_id: size(string(), 36, 36),
+  tags: optional(array(size(string(), 2, 30))),
+  category_id: size(string(), 36, 36),
+})
+
+type CreatePost = Omit<Prisma.PostCreateArgs['data'], 'id'>
+
 class PostService {
   async createPost({ title, content, author_id, tags, category_id }: IPost) {
+    assert({ title, content, author_id, tags, category_id }, CreatePost)
     try {
       const post = await prismaClient.post.create({
         data: {
@@ -35,17 +47,15 @@ class PostService {
     return post
   }
 
-  async listPosts(postsLimit?: number, index?: number) {
-    if (!postsLimit) postsLimit = 20
-    if (!index) index = 0
-
+  async listPosts(queryParams: IQueryParams) {
+    const { index, limit } = queryParams
     const [posts, totalPosts] = await prismaClient.$transaction([
       prismaClient.post.findMany({
         orderBy: {
           created_at: 'asc',
         },
-        skip: index,
-        take: postsLimit,
+        skip: typeof index === 'string' ? Number(index) : 0,
+        take: typeof limit === 'string' ? Number(limit) : undefined,
         select: {
           id: true,
           title: true,
@@ -93,7 +103,7 @@ class PostService {
     }
   }
 
-  async deletePost(post_id: string, user_id) {
+  async deletePost(post_id: string, user_id: string) {
     try {
       const user = await this.verifyUser(user_id)
       const post = await this.getPost(post_id)
@@ -115,7 +125,7 @@ class PostService {
     }
   }
 
-  async verifyUser(user_id) {
+  async verifyUser(user_id: string) {
     try {
       const user = await userService.getUser(user_id)
       return user

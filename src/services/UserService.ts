@@ -1,19 +1,26 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 import { prismaClient } from '../prisma/prisma'
+import { assert, object, string, size, refine } from 'superstruct'
 import validator from 'validator'
+import { IQueryParams } from '../controllers/PostController'
 
-import { ICreateUserParams } from '../controllers/UserController'
+const CreateUser = object({
+  name: size(string(), 2, 50),
+  email: refine(string(), 'email', (email) => validator.isEmail(email)),
+  job_title: size(string(), 2, 50),
+})
+
+type CreateUser = Omit<Prisma.UserCreateArgs['data'], 'id'>
 
 class UserService {
-  async createUser({ name, email, job_title }: ICreateUserParams) {
-    if (!validator.isEmail(email)) throw `${email} is not valid`
-
+  async createUser(params: CreateUser): Promise<User> {
+    assert(params, CreateUser)
     try {
       const user = await prismaClient.user.create({
         data: {
-          name: name,
-          email: email,
-          job_title: job_title,
+          name: params.name,
+          email: params.email,
+          job_title: params.job_title,
         },
       })
       return user
@@ -46,10 +53,8 @@ class UserService {
     return user
   }
 
-  async listUsers(postsLimit?: number, index?: number) {
-    if (!postsLimit) postsLimit = 20
-    if (!index) index = 0
-
+  async listUsers(queryParams: IQueryParams) {
+    const { index, limit } = queryParams
     const [users, totalUsers] = await prismaClient.$transaction([
       prismaClient.user.findMany({
         where: {
@@ -60,8 +65,8 @@ class UserService {
         orderBy: {
           created_at: 'asc',
         },
-        take: postsLimit,
-        skip: index,
+        take: typeof limit === 'string' ? Number(limit) : undefined,
+        skip: typeof index === 'string' ? Number(index) : 0,
       }),
       prismaClient.user.count({
         skip: 1,
