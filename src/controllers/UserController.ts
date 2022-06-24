@@ -1,22 +1,19 @@
 import { Request, Response } from 'express'
+import { StructError } from 'superstruct'
 import { UserService } from '../services/UserService'
-import { index, limit } from './PostController'
+import { IQueryParams } from './PostController'
 
 const service = new UserService()
 
-export interface ICreateUserParams {
-  name: string
-  email: string
-  job_title: string
-}
-
 class UserController {
   async handleCreateUser(req: Request, res: Response) {
-    const { name, email, job_title }: ICreateUserParams = req.body
     try {
-      const result = await service.createUser({ name, email, job_title })
+      const result = await service.createUser(req.body)
       return res.json(result)
     } catch (e) {
+      if (e instanceof StructError) {
+        return res.status(400).json({ message: `The ${e.value} is not a valid ${e.key}` })
+      }
       return res.status(400).json({ message: e })
     }
   }
@@ -34,20 +31,12 @@ class UserController {
   }
 
   async handleListUsers(req: Request, res: Response) {
-    const maximumNumberOfPosts = parseInt(process.env.MAXIMUM_NUMBER_OF_POSTS)
-
-    const index: index = Number(req.query.index)
-    const postsLimit: limit = Number(req.query.limit)
-
     try {
-      if (maximumNumberOfPosts < postsLimit)
-        throw `The maximum number of posts is ${maximumNumberOfPosts}`
-
-      const result = await service.listUsers(postsLimit, index)
+      const result = await service.listUsers(req.query as unknown as IQueryParams)
 
       return res.json(result)
     } catch (e) {
-      console.log(e)
+      return res.status(400).json({ message: 'Something went wrong' })
     }
   }
 }

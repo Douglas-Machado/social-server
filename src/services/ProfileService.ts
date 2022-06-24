@@ -1,9 +1,17 @@
 import { prismaClient } from '../prisma/prisma'
 import { ICreateProfileParams } from '../controllers/ProfileController'
 import { Prisma } from '@prisma/client'
+import { assert, object, string, size } from 'superstruct'
+
+const CreateProfile = object({
+  biography: size(string(), 20, 400),
+})
+
+type CreateProfile = Omit<Prisma.ProfileCreateArgs['data'], 'id'>
 
 class ProfileService {
   async createProfile({ biography, user_id }: ICreateProfileParams) {
+    assert(biography, CreateProfile)
     try {
       const profile = await prismaClient.profile.create({
         data: {
