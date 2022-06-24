@@ -15,7 +15,8 @@ class CreateProfileController {
       return res.json(result)
     } catch (e) {
       if (e instanceof StructError) {
-        return res.status(400).json({ message: `The ${e.value} is not a valid ${e.key}` })
+        console.log(e.failures())
+        return res.status(400).json({ message: `The '${e.value}' is not a valid ${e.key}` })
       }
       return res.status(400).json({ message: e })
     }
