@@ -1,0 +1,105 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "social-friends node",
+    "description": "This API is made integrate with social-friends web",
+    "contact": {
+      "email": "douglas_claudino10@hotmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4001/v1",
+      "description": "test API"
+    }
+  ],
+  "paths": {
+    "/users/create": {
+      "post": {
+        "summary": "Create user",
+        "description": "This route will create the user",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "the user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "user": {
+                    "value": {
+                      "name": "Douglas",
+                      "email": "douglas@email.com",
+                      "job_title": "software developer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "List users",
+        "description": "this route will show users",
+        "responses": {
+          "200": {
+            "description": "The total number of users and an array of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "User": {
+                    "type": "object",
+                    "properties": {
+                      "totalUsers": {
+                        "type": "integer"
+                      },
+                      "users": {
+                        "type": "array",
+                        "schemas": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"  
+          },
+          "name": {
+            "type": "string"  
+          },
+          "email": {
+            "type": "string"  
+          },
+          "job_title": {
+            "type": "string"  
+          },
+          "created_at": {
+            "type": "string"  
+          },
+          "updated_at": {
+            "type": "string"  
+          }
+        }
+      }
+    }
+  }
+}
