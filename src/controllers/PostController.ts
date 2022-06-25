@@ -5,11 +5,11 @@ import { PostService } from '../services/PostService'
 const service = new PostService()
 
 export interface IPost {
-  title?: string
-  content?: string
-  author_id?: string
-  tags?: string[]
-  category_id?: string
+  title: string
+  slug: string
+  content: string
+  author_id: string
+  category_id: string
 }
 
 export interface IQueryParams {
@@ -17,26 +17,14 @@ export interface IQueryParams {
   limit: string | number
 }
 
-interface IuserId {
+interface IUserId {
   user_id: string
 }
 
 class PostController {
   async handleCreatePost(req: Request, res: Response) {
-    const { title, content, author_id, tags, category_id }: IPost = req.body
-
-    if (tags && new Set(tags).size !== tags.length) {
-      return res.status(400).json({ message: 'The tag must be unique' })
-    }
-
     try {
-      const result = await service.createPost({
-        title,
-        content,
-        author_id,
-        tags,
-        category_id,
-      })
+      const result = await service.createPost(req.body as IPost)
 
       return res.json(result)
     } catch (e) {
@@ -67,15 +55,11 @@ class PostController {
   }
 
   async handleEditPost(req: Request, res: Response) {
-    const { content, tags }: IPost = req.body
     const { post_id } = req.params
     const { user_id } = req.headers
 
     try {
-      const result = await service.editPost(post_id, user_id, {
-        content,
-        tags,
-      })
+      const result = await service.editPost(post_id, user_id, req.body)
       return res.json(result)
     } catch (e) {
       if (e.message) return res.status(401).json({ message: e.message })
@@ -85,7 +69,7 @@ class PostController {
 
   async handleDeletePost(req: Request, res: Response) {
     const { post_id } = req.params
-    const { user_id } = req.headers as unknown as IuserId
+    const { user_id } = req.headers as unknown as IUserId
 
     try {
       const result = await service.deletePost(post_id, user_id)

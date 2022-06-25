@@ -6,8 +6,11 @@ import { assert, object, string, size, array, optional } from 'superstruct'
 import { UserService } from './UserService'
 const userService = new UserService()
 
+type content = { content: string }
+
 const CreatePost = object({
   title: size(string(), 2, 50),
+  slug: size(string(), 2, 50),
   content: size(string(), 2, 400),
   author_id: size(string(), 36, 36),
   tags: optional(array(size(string(), 2, 30))),
@@ -17,15 +20,15 @@ const CreatePost = object({
 type CreatePost = Omit<Prisma.PostCreateArgs['data'], 'id'>
 
 class PostService {
-  async createPost({ title, content, author_id, tags, category_id }: IPost) {
-    assert({ title, content, author_id, tags, category_id }, CreatePost)
+  async createPost({ title, slug, content, author_id, category_id }: IPost) {
+    assert({ title, slug, content, author_id, category_id }, CreatePost)
     try {
       const post = await prismaClient.post.create({
         data: {
           title: title,
+          slug: slug,
           content: content,
           author_id: author_id,
-          tags: tags,
           category_id: category_id,
         },
       })
@@ -62,7 +65,6 @@ class PostService {
           title: true,
           content: true,
           author_id: true,
-          tags: true,
           updated_at: true,
           category: {
             select: {
@@ -78,7 +80,7 @@ class PostService {
     return { totalPosts, posts }
   }
 
-  async editPost(post_id: string, user_id, { content, tags }: IPost) {
+  async editPost(post_id: string, user_id, { content }: content) {
     try {
       const user = await this.verifyUser(user_id)
       const post = await this.getPost(post_id)
@@ -92,7 +94,6 @@ class PostService {
         },
         data: {
           content: content,
-          tags: tags,
         },
       })
       return updatedPost
