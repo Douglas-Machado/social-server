@@ -4,6 +4,7 @@ generator client {
 
 generator erd {
   provider = "prisma-erd-generator"
+  theme    = "forest"
 }
 
 datasource db {
@@ -22,6 +23,7 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  comment Comment[]
   @@unique([email])
   @@map("users")
 }
@@ -41,18 +43,33 @@ model Profile {
 model Post {
   id          String   @id @default(uuid())
   title       String
+  slug        String   @unique
   published   Boolean  @default(true)
   content     String
   author_id   String
   author      User     @relation(fields: [author_id], references: [id])
-  tags        String[]
   category_id String
   category    Category @relation(fields: [category_id], references: [id])
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  Comment Comment[]
   @@map("posts")
+}
+
+model Comment {
+  id        String @id @default(uuid())
+  content   String @db.VarChar(400)
+  post_id   String
+  post      Post   @relation(fields: [post_id], references: [id])
+  author_id String
+  user      User   @relation(fields: [author_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("comments")
 }
 
 model Category {
