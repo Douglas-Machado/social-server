@@ -60,7 +60,7 @@ class UserService {
       prismaClient.user.findMany({
         where: {
           name: {
-            not: 'Admin',
+            not: process.env.ADMIN_NAME,
           },
         },
         orderBy: {
