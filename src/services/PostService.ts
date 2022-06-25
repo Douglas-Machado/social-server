@@ -1,7 +1,7 @@
 import { prismaClient } from '../prisma/prisma'
 import { IPost, IQueryParams } from '../controllers/PostController'
 import { Prisma } from '@prisma/client'
-import { assert, object, string, size, array, optional } from 'superstruct'
+import { assert, object, string, size } from 'superstruct'
 
 import { UserService } from './UserService'
 const userService = new UserService()
@@ -13,7 +13,6 @@ const CreatePost = object({
   slug: size(string(), 2, 50),
   content: size(string(), 2, 400),
   author_id: size(string(), 36, 36),
-  tags: optional(array(size(string(), 2, 30))),
   category_id: size(string(), 36, 36),
 })
 
@@ -45,6 +44,9 @@ class PostService {
       where: {
         id: post_id,
       },
+      include: {
+        comments: true,
+      },
     })
     if (post === null) throw new Error('Post not found')
     return post
@@ -65,11 +67,18 @@ class PostService {
           title: true,
           content: true,
           author_id: true,
-          updated_at: true,
+          created_at: true,
           category: {
             select: {
               id: true,
               name: true,
+            },
+          },
+          comments: {
+            select: {
+              author_id: true,
+              content: true,
+              created_at: true,
             },
           },
         },
@@ -82,6 +91,7 @@ class PostService {
 
   async editPost(post_id: string, user_id, { content }: content) {
     try {
+      if (!content) throw new Error('Invalid content')
       const user = await this.verifyUser(user_id)
       const post = await this.getPost(post_id)
 

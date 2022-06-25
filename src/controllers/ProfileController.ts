@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { StructError } from 'superstruct'
 import { ProfileService } from '../services/ProfileService'
-const service = new ProfileService()
+const profileService = new ProfileService()
 
 export interface ICreateProfileParams {
   biography: string
@@ -11,7 +11,7 @@ export interface ICreateProfileParams {
 class CreateProfileController {
   async handle(req: Request, res: Response) {
     try {
-      const result = await service.createProfile(req.body)
+      const result = await profileService.createProfile(req.body)
       return res.json(result)
     } catch (e) {
       if (e instanceof StructError) {

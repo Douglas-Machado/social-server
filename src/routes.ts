@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import userController from './controllers/UserController'
+import profileController from './controllers/ProfileController'
 import postController from './controllers/PostController'
-import ProfileController from './controllers/ProfileController'
-
-import categoriesController from './controllers/CategoriesController'
+import commentController from './controllers/CommentController'
+import categoryController from './controllers/CategoryController'
 
 const routes = Router()
 
@@ -11,7 +11,7 @@ routes.get('/users', userController.handleListUsers)
 routes.post('/users/create', userController.handleCreateUser)
 routes.get('/users/:user_id', userController.handleGetUser)
 
-routes.post('/profile/create', ProfileController.handle)
+routes.post('/profile/create', profileController.handle)
 
 routes.get('/posts', postController.handleListPosts)
 routes.post('/posts/create', postController.handleCreatePost)
@@ -19,7 +19,9 @@ routes.get('/posts/:post_id', postController.handleGetPost)
 routes.put('/posts/:post_id', postController.handleEditPost)
 routes.delete('/posts/delete/:post_id', postController.handleDeletePost)
 
-routes.get('/categories', categoriesController.handleListCategories)
-routes.get('/categories/:category_id', categoriesController.handleListCategoryPosts)
+routes.post('/comments/create', commentController.handleCreateComment)
+
+routes.get('/categories', categoryController.handleListCategories)
+routes.get('/categories/:category_id', categoryController.handleListCategoryPosts)
 
 export { routes }

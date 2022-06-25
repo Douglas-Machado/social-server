@@ -3,12 +3,12 @@ import { StructError } from 'superstruct'
 import { UserService } from '../services/UserService'
 import { IQueryParams } from './PostController'
 
-const service = new UserService()
+const userService = new UserService()
 
 class UserController {
   async handleCreateUser(req: Request, res: Response) {
     try {
-      const result = await service.createUser(req.body)
+      const result = await userService.createUser(req.body)
       return res.json(result)
     } catch (e) {
       if (e instanceof StructError) {
@@ -22,7 +22,7 @@ class UserController {
     const { user_id } = req.params
 
     try {
-      const result = await service.getUser(user_id)
+      const result = await userService.getUser(user_id)
 
       return res.json(result)
     } catch (e) {
@@ -32,7 +32,7 @@ class UserController {
 
   async handleListUsers(req: Request, res: Response) {
     try {
-      const result = await service.listUsers(req.query as unknown as IQueryParams)
+      const result = await userService.listUsers(req.query as unknown as IQueryParams)
 
       return res.json(result)
     } catch (e) {

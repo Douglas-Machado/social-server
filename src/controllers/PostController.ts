@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { StructError } from 'superstruct'
 import { PostService } from '../services/PostService'
 
-const service = new PostService()
+const postService = new PostService()
 
 export interface IPost {
   title: string
@@ -24,7 +24,7 @@ interface IUserId {
 class PostController {
   async handleCreatePost(req: Request, res: Response) {
     try {
-      const result = await service.createPost(req.body as IPost)
+      const result = await postService.createPost(req.body as IPost)
 
       return res.json(result)
     } catch (e) {
@@ -38,7 +38,7 @@ class PostController {
   async handleGetPost(req: Request, res: Response) {
     const { post_id } = req.params
     try {
-      const result = await service.getPost(post_id)
+      const result = await postService.getPost(post_id)
       return res.json(result)
     } catch (e) {
       return res.status(400).json({ message: e.message })
@@ -47,7 +47,7 @@ class PostController {
 
   async handleListPosts(req: Request, res: Response) {
     try {
-      const result = await service.listPosts(req.query as unknown as IQueryParams)
+      const result = await postService.listPosts(req.query as unknown as IQueryParams)
       return res.json(result)
     } catch (e) {
       return res.status(400).json({ message: 'Something went wrong' })
@@ -59,7 +59,7 @@ class PostController {
     const { user_id } = req.headers
 
     try {
-      const result = await service.editPost(post_id, user_id, req.body)
+      const result = await postService.editPost(post_id, user_id, req.body)
       return res.json(result)
     } catch (e) {
       if (e.message) return res.status(401).json({ message: e.message })
@@ -72,7 +72,7 @@ class PostController {
     const { user_id } = req.headers as unknown as IUserId
 
     try {
-      const result = await service.deletePost(post_id, user_id)
+      const result = await postService.deletePost(post_id, user_id)
       return res.json(result)
     } catch (e) {
       return res.status(400).json({ message: e })

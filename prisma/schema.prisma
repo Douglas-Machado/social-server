@@ -23,7 +23,7 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  comment Comment[]
+  comments Comment[]
   @@unique([email])
   @@map("users")
 }
@@ -32,7 +32,7 @@ model Profile {
   id        String @id @default(uuid())
   biography String
   user_id   String @unique
-  user      User   @relation(fields: [user_id], references: [id])
+  user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -47,25 +47,24 @@ model Post {
   published   Boolean  @default(true)
   content     String
   author_id   String
-  author      User     @relation(fields: [author_id], references: [id])
+  author      User     @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   category_id String
   category    Category @relation(fields: [category_id], references: [id])
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  Comment Comment[]
+  comments Comment[]
   @@map("posts")
 }
 
 model Comment {
-  id        String @id @default(uuid())
-  content   String @db.VarChar(400)
-  post_id   String
-  post      Post   @relation(fields: [post_id], references: [id])
-  author_id String
-  user      User   @relation(fields: [author_id], references: [id])
-
+  id         String   @id @default(uuid())
+  content    String   @db.VarChar(400)
+  post_id    String
+  author_id  String
+  post       Post     @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user       User     @relation(fields: [author_id], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -79,6 +78,7 @@ model Category {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
 
   @@unique([name])
   @@map("categories")
