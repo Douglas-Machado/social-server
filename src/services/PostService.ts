@@ -16,7 +16,13 @@ const CreatePost = object({
   category_id: size(string(), 36, 36),
 })
 
-type CreatePost = Omit<Prisma.PostCreateArgs['data'], 'id'>
+type CreatePost = Omit<Prisma.PostCreateArgs['data'], 'title'>
+
+const UpdatePost = object({
+  content: size(string(), 2, 400),
+})
+
+type UpdatePost = Prisma.PostUpdateArgs['data']['content']
 
 class PostService {
   async createPost({ title, slug, content, author_id, category_id }: IPost) {
@@ -89,7 +95,8 @@ class PostService {
     return { totalPosts, posts }
   }
 
-  async editPost(post_id: string, user_id, { content }: content) {
+  async updatePost(post_id: string, user_id, { content }: content) {
+    assert({ content }, UpdatePost)
     try {
       if (!content) throw new Error('Invalid content')
       const user = await this.verifyUser(user_id)

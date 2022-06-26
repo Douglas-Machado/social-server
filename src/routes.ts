@@ -16,7 +16,7 @@ routes.post('/profile/create', profileController.handle)
 routes.get('/posts', postController.handleListPosts)
 routes.post('/posts/create', postController.handleCreatePost)
 routes.get('/posts/:post_id', postController.handleGetPost)
-routes.put('/posts/:post_id', postController.handleEditPost)
+routes.put('/posts/:post_id', postController.handleUpdatePost)
 routes.delete('/posts/delete/:post_id', postController.handleDeletePost)
 
 routes.post('/comments/create', commentController.handleCreateComment)

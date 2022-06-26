@@ -54,15 +54,19 @@ class PostController {
     }
   }
 
-  async handleEditPost(req: Request, res: Response) {
+  async handleUpdatePost(req: Request, res: Response) {
     const { post_id } = req.params
     const { user_id } = req.headers
-
     try {
-      const result = await postService.editPost(post_id, user_id, req.body)
+      const result = await postService.updatePost(post_id, user_id, req.body)
       return res.json(result)
     } catch (e) {
-      if (e.message) return res.status(401).json({ message: e.message })
+      if (e instanceof StructError) {
+        return res.status(400).json({ message: `The ${e.value} is not a valid ${e.key}` })
+      }
+      if (e.message) {
+        return res.status(401).json({ message: e.message })
+      }
       return res.status(400).json({ message: e })
     }
   }
